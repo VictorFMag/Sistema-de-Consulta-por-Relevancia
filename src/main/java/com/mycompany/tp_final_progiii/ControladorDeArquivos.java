@@ -1,0 +1,60 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package com.mycompany.tp_final_progiii;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.util.List;
+
+/**
+ *
+ * @author aluno
+ */
+public class ControladorDeArquivos {
+    public void lerDocumentos(List<String> documentos) throws FileNotFoundException, IOException {
+        String pastaPath = "colecao_small"; // Caminho da pasta
+        File pasta = new File(pastaPath);
+        for (File arquivo : pasta.listFiles()) {
+            lerConteudoDocumento(arquivo, documentos);
+        }
+    }
+    
+    public void lerConteudoDocumento(File arquivo, List<String> documentos) throws FileNotFoundException, IOException {
+        BufferedReader br = new BufferedReader(new FileReader(arquivo));
+        String linha;
+        while ((linha = br.readLine()) != null) {
+            documentos.add(linha);
+        }
+    }
+    
+    public void lerStopwords(List<String> stopwords) throws FileNotFoundException, IOException {
+        String docPath = "stopwords.txt"; // Caminho do arquivo
+        BufferedReader br = new BufferedReader(new FileReader(docPath));
+        String linha;
+        while ((linha = br.readLine()) != null) {
+            stopwords.add(linha);
+        }
+    }
+    
+    public void lerConsultas(List<String> Q) throws FileNotFoundException, IOException {
+        String docPath = "consulta1.txt"; // Caminho do arquivo
+        BufferedReader br = new BufferedReader(new FileReader(docPath));
+        
+        String linha = br.readLine();
+        String[] formatedData = linha.split(" ");
+        for (String termo : formatedData) {
+            Q.add(termo);    
+        }
+    }
+    
+    public void escreverSaidas() throws FileNotFoundException, IOException {
+        String docPath = "ranking1.txt"; // Caminho do arquivo
+        FileWriter FW = new FileWriter(docPath);
+    }
+}
