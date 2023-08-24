@@ -17,7 +17,7 @@ public class TP_final_progIII {
     public static void main(String[] args) throws IOException {
         ControladorDeArquivos controller = new ControladorDeArquivos();
         
-        List<String> documentos = new ArrayList<>();
+        List<Documento> documentos = new ArrayList<>();
         controller.lerDocumentos(documentos);
 
         List<String> stopwords = new ArrayList<>();

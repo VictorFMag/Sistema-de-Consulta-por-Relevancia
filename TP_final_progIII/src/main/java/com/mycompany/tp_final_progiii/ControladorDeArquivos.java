@@ -17,22 +17,22 @@ import java.util.List;
  * @author aluno
  */
 public class ControladorDeArquivos {
-    public void lerDocumentos(List<String> documentos) throws FileNotFoundException, IOException {
+
+    public void lerDocumentos(List<Documento> documentos) throws FileNotFoundException, IOException {
         String pastaPath = "colecao_small"; // Caminho da pasta
         File pasta = new File(pastaPath);
         for (File arquivo : pasta.listFiles()) {
-            lerConteudoDocumento(arquivo, documentos);
+            Documento documento = new Documento(arquivo.getName(), lerConteudoDocumento(arquivo, documentos));
+            documentos.add(documento);
         }
     }
-    
-    public void lerConteudoDocumento(File arquivo, List<String> documentos) throws FileNotFoundException, IOException {
+
+    public String lerConteudoDocumento(File arquivo, List<Documento> documentos) throws FileNotFoundException, IOException {
         BufferedReader br = new BufferedReader(new FileReader(arquivo));
-        String linha;
-        while ((linha = br.readLine()) != null) {
-            documentos.add(linha);
-        }
+        String linha = br.readLine();
+        return linha;
     }
-    
+
     public void lerStopwords(List<String> stopwords) throws FileNotFoundException, IOException {
         String docPath = "stopwords.txt"; // Caminho do arquivo
         BufferedReader br = new BufferedReader(new FileReader(docPath));
@@ -41,20 +41,29 @@ public class ControladorDeArquivos {
             stopwords.add(linha);
         }
     }
-    
+
     public void lerConsultas(List<String> Q) throws FileNotFoundException, IOException {
         String docPath = "consulta1.txt"; // Caminho do arquivo
         BufferedReader br = new BufferedReader(new FileReader(docPath));
-        
+
         String linha = br.readLine();
         String[] formatedData = linha.split(" ");
         for (String termo : formatedData) {
-            Q.add(termo);    
+            Q.add(termo);
         }
     }
-    
-    public void escreverSaidas() throws FileNotFoundException, IOException {
+
+    public void escreverSaidas(List<Pair<Documento, Double>> ranking) throws FileNotFoundException, IOException {
         String docPath = "ranking1.txt"; // Caminho do arquivo
-        FileWriter FW = new FileWriter(docPath);
+        FileWriter FW = new FileWriter(docPath, false);
+
+        int cont = 0;
+        for (Pair<Documento, Double> par : ranking) {   
+            String docIdFormatado = par.getDocID().docID.replace(".txt", " ");
+            FW.write(docIdFormatado);   
+            if (cont==9) {break;}
+            cont++;
+        }
+        FW.close();
     }
 }

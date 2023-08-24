@@ -14,25 +14,22 @@ import java.util.List;
 import java.util.Map;
 
 public class Indexador {
-    private List<String> documentos;
+    private List<Documento> documentos;
     private List<String> stopwords;
     private Map<String, List<Pair<Integer, Integer>>> indiceInvertido;
 
-    public Indexador(List<String> documentos, List<String> stopwords) {
+    public Indexador(List<Documento> documentos, List<String> stopwords) {
         this.documentos = documentos;
         this.stopwords = stopwords;
         this.indiceInvertido = new HashMap<>(); // busca e inserção é O(1) no caso médio
         indexarDocumentos();
-        //printarIndice();
+        printarIndice();
     }
 
     private void indexarDocumentos() {
         for (int d = 0; d < documentos.size(); d++) {
-            String documentoAnalisado = documentos.get(d); // lê a linha do docoumento analisado
-            String[] linhaFormatada = documentoAnalisado.replace(",", " ").replace("/", " ")
-                    .replace(".", " ").replace("-", " ").replace("_", " ")
-                    .replace("[", " ").replace("]", " ").replace("(", " ")
-                    .replace(")", " ").split("\\s+"); // formata a linha do documento analisado
+            String documentoAnalisado = documentos.get(d).conteudo.toLowerCase(); // lê a linha do docoumento analisado
+            String[] linhaFormatada = documentoAnalisado.replaceAll("\\p{Punct}", " ").split("\\s+"); // formata a linha do documento analisado
             
             Map<String, Integer> vocabulario = new HashMap<>(); // cria o vocabulário
 
@@ -78,7 +75,7 @@ public class Indexador {
             System.out.print("[" + palavra + "] => ");
             for (Pair<Integer, Integer> ocorrência : ocorrências) {
                 int documentoAnalisado = ocorrência.getDocID();
-                int frequencia = ocorrência.getFrequencia();
+                int frequencia = ocorrência.getValue();
                 System.out.print("(" + documentoAnalisado + "," + frequencia + ") ");
             }
             System.out.println("");

@@ -10,18 +10,18 @@ package com.mycompany.tp_final_progiii;
  */
 public class Pair<D, F> {
     private D documento;
-    private F frequencia;
+    private F value;
 
-    public Pair(D documento, F frequencia) {
+    public Pair(D documento, F value) {
         this.documento = documento;
-        this.frequencia = frequencia;
+        this.value = value;
     }
 
     public D getDocID() {
         return documento;
     }
 
-    public F getFrequencia() {
-        return frequencia;
+    public F getValue() {
+        return value;
     }
 }
