@@ -25,11 +25,9 @@ public class TP_final_progIII {
         
         Indexador indexador = new Indexador(documentos, stopwords);
         
-        
         List<String> Q = new ArrayList<>();
         controller.lerConsultas(Q);
         
         ProcessadorConsultas consultas = new ProcessadorConsultas(Q, documentos, indexador);
-        
     }
 }

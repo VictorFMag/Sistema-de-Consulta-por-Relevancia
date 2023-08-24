@@ -4,6 +4,8 @@
  */
 package com.mycompany.tp_final_progiii;
 
+import java.lang.ModuleLayer.Controller;
+
 /**
  *
  * @author Victor
@@ -12,69 +14,72 @@ package com.mycompany.tp_final_progiii;
 import java.util.*;
 
 public class ProcessadorConsultas {
-    private List<String> consulta; // Q
-    private List<String> documentos; // R
-    
+    private List<String> consulta; // Tem os termos que devem ser pesquisados
+    private List<String> listaDocumentos; // Lista com todos os documentos da pasta
+
+    // Pega o índice invertido
     private Indexador indexador;
     private Map<String, List<Pair<Integer, Integer>>> indiceInvertido;
 
+    private List<Pair<Integer, Double>> ranking = new ArrayList<>();
+
     public ProcessadorConsultas(List<String> consulta, List<String> documentos, Indexador indexador) {
         this.consulta = consulta;
-        this.documentos = documentos;
+        this.listaDocumentos = documentos;
         this.indexador = indexador;
         this.indiceInvertido = indexador.getIndiceInvertido();
-        processarConsultas();
+        calculaSIM();
+        //printRanking();
     }
 
-    private void processarConsultas() {
-        double[] resultado = new double[documentos.size()];
-
-        for (String termo : consulta) {
-            if (!indiceInvertido.containsKey(termo)) {
-                continue;
-            }
-
-            List<Pair<Integer, Integer>> docs = indiceInvertido.get(termo);
-            double idf = Math.log((double) documentos.size() / docs.size());
-
-        // a partir daqui tá dando erro
-            for (Pair<Integer, Integer> doc : docs) {
-                int docId = doc.getDocumento();
-                int tf = doc.getFrequencia();
-                double w_td = tf * idf;
-                resultado[docId] += w_td;
-            }
-        }
-
-        for (int d = 0; d < resultado.length; d++) {
-            resultado[d] /= indexador.calculaWd(resultado[d]);
-        }
-        // até aqui tá dando erro
-
-        ordenarEImprimir(resultado);
-    }
-
-    private void ordenarEImprimir(double[] resultado) {
-        Map<Integer, Double> scoreDocumento = new HashMap<>();
+    private void calculaSIM() {
+        double sim = 0;
+        double Wd = 0;
+        Pair<Integer, Double> docRankeado;
         
-        for (int i = 0; i < resultado.length; i++) {
-            scoreDocumento.put(i, resultado[i]);
-        }
+        for (String documento : listaDocumentos) {
+            for (Map<String, List<Pair<Integer, Integer>>> palavras : indiceInvertido) {
+                //se o documento tiver a palavra, wiq é 1, senão é 0
+            }
+            for (String termo : consulta) {
+                List<Pair<Integer, Integer>> ocorrenciasDoTermo = indiceInvertido.get(termo);
+                double idf = Math.log((double) listaDocumentos.size() / ocorrenciasDoTermo.size());
 
-        scoreDocumento.entrySet().stream().sorted(Comparator.comparingDouble(Map.Entry::getValue)).forEach(entry -> {
-            int docId = entry.getKey();
-            double score = entry.getValue();
-            
-            System.out.println("Documento: " + docId + "  Escore: " + score);
+                for (Pair<Integer, Integer> ocorrencia : ocorrenciasDoTermo) {
+                    sim += (calculaWtd(ocorrencia, idf));
+                    Wd += Math.pow(calculaWtd(ocorrencia, idf), 2);
+                }
+                System.out.println(Math.sqrt(Wd)); // o Wd está sempre sendo o mesmo
+            }
+            sim /= Math.sqrt(Wd);
+            docRankeado = new Pair<Integer, Double>(listaDocumentos.indexOf(documento), sim);
+            insereRanking(docRankeado);
+            sim = 0;
+            Wd = 0;
+        }
+    }
+
+    private double calculaWtd(Pair<Integer, Integer> ocorrencia, double idf) {
+        int tf = ocorrencia.getFrequencia();
+        double w_td = tf * idf;
+        return w_td;
+    }
+
+    private void insereRanking(Pair<Integer, Double> docRankeado) {
+        ranking.add(docRankeado);
+        // Ordenar em ordem decrescente com base nos valores Double
+        Collections.sort(ranking, new Comparator<Pair<Integer, Double>>() {
+            @Override
+            public int compare(Pair<Integer, Double> p1, Pair<Integer, Double> p2) {
+                // Ordenar em ordem decrescente
+                return Double.compare(p2.getFrequencia(), p1.getFrequencia());
+            }
         });
-        
-        /* Como é feita a ordenagem por escore:
-        
-            entrySet() -> retorna um conjunto de entradas do mapa. Cada entrada consiste em uma chave (docId e score).
+    }
 
-            stream() -> transforma o conjunto de entradas em uma sequência de elementos.
-
-            sorted(Comparator.comparingDouble(Map.Entry::getValue)) -> classifica os elementos do stream com base no valor do escore (getValue() do objeto Map.Entry). Isso coloca os documentos em ordem crescente de escores.
-        */
+    private void printRanking() {
+        for (Pair<Integer, Double> pair : ranking) {
+            System.out.println("Documento "+pair.getDocID() + ", Similaridade: " + pair.getFrequencia());
+        }
     }
 }

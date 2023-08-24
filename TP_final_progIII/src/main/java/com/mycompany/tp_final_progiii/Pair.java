@@ -17,7 +17,7 @@ public class Pair<D, F> {
         this.frequencia = frequencia;
     }
 
-    public D getDocumento() {
+    public D getDocID() {
         return documento;
     }
 

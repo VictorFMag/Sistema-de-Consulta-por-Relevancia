@@ -23,7 +23,7 @@ public class Indexador {
         this.stopwords = stopwords;
         this.indiceInvertido = new HashMap<>(); // busca e inserção é O(1) no caso médio
         indexarDocumentos();
-        printarIndice();
+        //printarIndice();
     }
 
     private void indexarDocumentos() {
@@ -77,18 +77,12 @@ public class Indexador {
 
             System.out.print("[" + palavra + "] => ");
             for (Pair<Integer, Integer> ocorrência : ocorrências) {
-                int documentoAnalisado = ocorrência.getDocumento();
+                int documentoAnalisado = ocorrência.getDocID();
                 int frequencia = ocorrência.getFrequencia();
                 System.out.print("(" + documentoAnalisado + "," + frequencia + ") ");
             }
             System.out.println("");
         }
-    }
-    
-    public double calculaWd(double w_td) {
-        double Wd = Math.sqrt(Math.pow(w_td, 2));
-        
-        return Wd;
     }
     
 }
