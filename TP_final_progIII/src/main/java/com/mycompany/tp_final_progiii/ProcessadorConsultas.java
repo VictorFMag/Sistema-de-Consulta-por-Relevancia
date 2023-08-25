@@ -60,7 +60,7 @@ public class ProcessadorConsultas {
             if(p.getDocID().docID.equals(documento.docID)){
                int ftd = p.getValue();
                int ft = indiceInvertidoPalavra.size();
-               peso = ftd * (Math.log(listaDocumentos.size()/ft)/Math.log(2.71));
+               peso = ftd * Math.log(listaDocumentos.size()/ft);
             }
         }
         return peso;
